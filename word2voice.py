@@ -23,4 +23,4 @@ voices = engine.getProperty('voices')
 engine.setProperty('voice', voices[0].id)
 engine.say('你好，你叫' + name + '你的年龄是：' + age + '岁,对吗？')
 engine.runAndWait()
-engine.stop
+engine.stop()
