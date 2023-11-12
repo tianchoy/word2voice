@@ -11,7 +11,7 @@ engine.setProperty('voice',voices[0].id)
 def run1():
      a = str(inp1.get())
      b = str(inp2.get())
-     engine.say('你好，你叫'+a+'你的年龄是：'+b+'岁,对吗？')
+     engine.say(a+'你好，我掐指一算，你的年龄是：'+b+'岁,对吗？')
      engine.runAndWait()
      engine.stop
      s =  ('你好，你叫'+a+'你的年龄是：'+b+'岁,对吗？\n')
