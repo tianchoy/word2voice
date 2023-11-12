@@ -14,7 +14,7 @@ def run1():
      engine.say(a+'你好，我掐指一算，你的年龄是：'+b+'岁,对吗？')
      engine.runAndWait()
      engine.stop
-     s =  ('你好，你叫'+a+'你的年龄是：'+b+'岁,对吗？\n')
+     s =  (a+'你好，我掐指一算，你的年龄是：'+b+'岁,对吗？\n')
      txt.insert(END, s)   # 追加显示运算结果
 def run2():
      inp1.delete(0, END)  # 清空输入
