@@ -13,7 +13,7 @@ def run1():
      b = str(inp2.get())
      engine.say(a+'你好，我掐指一算，你的年龄是：'+b+'岁,对吗？')
      engine.runAndWait()
-     engine.stop
+     engine.stop()
      s =  (a+'你好，我掐指一算，你的年龄是：'+b+'岁,对吗？\n')
      txt.insert(END, s)   # 追加显示运算结果
 def run2():

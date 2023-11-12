@@ -7,7 +7,7 @@ def runBuild():
     word = text.get('1.0', 'end')
     engine.say(word)
     engine.runAndWait()
-    engine.stop
+    engine.stop()
 
 #初始化文字转语音插件
 engine = pyttsx3.init()
