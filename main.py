@@ -2,16 +2,6 @@ import pyttsx3
 from tkinter import *
 
 engine = pyttsx3.init()
-
-def onStart(name):
-    print('开始说话:')
-
-def onEnd(name, completed):
-    print('说话结束:',  completed)
-
-engine.connect('started-utterance', onStart)
-engine.connect('finished-utterance', onEnd)
-
 engine.setProperty('rate',150)
 engine.setProperty('volume',1)
 
