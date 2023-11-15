@@ -1,3 +1,5 @@
+from tkinter import *
+from tkinter.font import Font
 import SparkApi
 #以下密钥信息从控制台获取
 appid = ""     #填写控制台中获取的 APPID 信息
@@ -11,14 +13,14 @@ domain = "general"   # v1.5版本
 Spark_url = "ws://spark-api.xf-yun.com/v1.1/chat"  # v1.5环境的地址
 # Spark_url = "ws://spark-api.xf-yun.com/v2.1/chat"  # v2.0环境的地址
 
-from tkinter import *
-
 win = Tk()
 win.title("讯飞星火V1.0")
 win.geometry("700x500")
 
 scrollbar = Scrollbar(win)
 scrollbar.pack(side=RIGHT, fill=Y)
+
+font = Font(family="Microsoft YaHei", size=10)
 
 text =[]
 
@@ -57,12 +59,12 @@ def print_selection():
 # 运行函数
 def runbuild():
     Input = str(inp1.get())
-    inputText = ('我：'+ Input + '\n\n')
+    inputText = ("我：" + Input + '\n')
     texts.insert(END, inputText)
     question = checklen(getText("user",Input))
     SparkApi.answer = ""
     SparkApi.main(appid,api_key,api_secret,Spark_url,domain,question)
-    res = ('星火回答：'+SparkApi.answer+'\n\n\n')
+    res = ('星火回答：'+SparkApi.answer+'\n\n')
     texts.insert(END,str(res))
 
 
@@ -78,18 +80,15 @@ r2 = Radiobutton(win, text="2.0模型", variable=var, value=2, command=print_sel
 r2.pack()
 r2.place(x=10, y=25, width=100, height=20)
 
-inp1 = Entry(win, textvariable=StringVar(value='请输入问题'))
+inp1 = Entry(win, textvariable=StringVar(value='请输入问题'),font=font)
 inp1.place(relx=0.15, rely=0.03, relwidth=0.7, relheight=0.05)
 
-texts = Text(win, wrap=WORD,yscrollcommand=scrollbar.set)
+texts = Text(win, wrap=WORD,yscrollcommand=scrollbar.set,font=font,padx=10, pady=10)
 texts.place(relx=0.03, rely=0.1, relwidth=0.94, relheight=0.85)
 scrollbar.config(command=texts.yview)
 
 btn = Button(win, text="生成结果",command=runbuild)
 btn.place(relx=0.87, rely=0.03, relwidth=0.1, relheight=0.05)
-
-
-
 
 # 载入窗体
 win.mainloop()
