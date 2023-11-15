@@ -13,6 +13,8 @@ domain = "general"   # v1.5版本
 Spark_url = "ws://spark-api.xf-yun.com/v1.1/chat"  # v1.5环境的地址
 # Spark_url = "ws://spark-api.xf-yun.com/v2.1/chat"  # v2.0环境的地址
 
+modelType = '1.5'
+
 win = Tk()
 win.title("讯飞星火V1.0")
 win.geometry("700x500")
@@ -47,12 +49,15 @@ def checklen(text):
 def print_selection():
     global domain
     global Spark_url
+    global modelType
     if var.get() == 1:
         domain = "general"
         Spark_url = "ws://spark-api.xf-yun.com/v1.1/chat"
+        modelType = '1.5'
     else:
         domain = "generalv2"
         Spark_url = "ws://spark-api.xf-yun.com/v2.1/chat"
+        modelType = '2.0'
 
 
 
@@ -64,7 +69,7 @@ def runbuild():
     question = checklen(getText("user",Input))
     SparkApi.answer = ""
     SparkApi.main(appid,api_key,api_secret,Spark_url,domain,question)
-    res = ('星火回答：'+SparkApi.answer+'\n\n')
+    res = ('星火('+modelType+')回答：'+SparkApi.answer+'\n\n')
     texts.insert(END,str(res))
 
 
