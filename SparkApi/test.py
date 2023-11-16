@@ -105,11 +105,11 @@ def copyContent():
     if content != '':
         try:
             pyperclip.copy(content)
-            messagebox.showinfo(winTitle, "复制成功")
+            messagebox.showinfo(winTitle, "复制成功！")
         except:
-            messagebox.showinfo(winTitle, "无法复制")
+            messagebox.showinfo(winTitle, "无法复制！")
     else:
-        messagebox.showinfo(winTitle, "空内容复制个啥？")
+        messagebox.showinfo(winTitle, "复制内容为空！")
 
 
 # 布局窗体
