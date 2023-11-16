@@ -77,15 +77,18 @@ def print_selection():
 
 
 def fetch_data():
-    Input = str(inp1.get())
-    inputText = ("我：" + Input + '\n')
-    texts.insert(END, inputText)
-    question = checklen(getText("user", Input))
-    SparkApi.answer = ""
-    SparkApi.main(appid, api_key, api_secret, Spark_url, domain, question)
-    res = ('星火(' + modelType + ')回答：' + SparkApi.answer + '\n\n')
-    texts.insert(END, str(res))
-    btn.config(text='生成结果', state='normal')
+    try:
+        Input = str(inp1.get())
+        inputText = ("我：" + Input + '\n')
+        texts.insert(END, inputText)
+        question = checklen(getText("user", Input))
+        SparkApi.answer = ""
+        SparkApi.main(appid, api_key, api_secret, Spark_url, domain, question)
+        res = ('星火(' + modelType + ')回答：' + SparkApi.answer + '\n\n')
+        texts.insert(END, str(res))
+        btn.config(text='生成结果', state='normal')
+    except:
+        messagebox.showinfo(winTitle, "生成失败")
 
 # 运行函数
 def runbuild():
@@ -96,8 +99,11 @@ def runbuild():
 
 # 清空输入
 def clearbuild():
-    inp1.delete(0, END)  # 清空输入
-    texts.delete(1.0, END)
+    try:
+        inp1.delete(0, END)  # 清空输入
+        texts.delete(1.0, END)
+    except:
+        messagebox.showinfo(winTitle, "清空失败")
 
 
 def copyContent():
