@@ -32,7 +32,7 @@ win.geometry(winSize)
 
 # 初始化语音插件
 engine = pyttsx3.init()
-engine.setProperty('rate',180)
+engine.setProperty('rate',200)
 engine.setProperty('volume',1)
 
 voices = engine.getProperty('voices')
@@ -46,7 +46,10 @@ scrollbar.pack(side=RIGHT, fill=Y)
 font = Font(family="Driod Sans Mono", size=10)  # 设置显示字体
 text = []
 
-
+def reads(content):
+    engine.say(content)
+    engine.runAndWait()
+    engine.stop()
 
 def getText(role, content):
     jsoncon = {}
@@ -129,10 +132,12 @@ def copyContent():
 
 # 阅读线程
 def readThread():
-    engine.say(answerContent)
-    engine.runAndWait()
-    engine.stop()
-    btn3.config(text='朗读', state='normal')
+    if answerContent != '':
+        reads(answerContent)
+        btn3.config(text='朗读', state='normal')
+    else:
+        reads('你好歹先问个问题，你啥也不问，我说啥？')
+        btn3.config(text='朗读', state='normal')
 
 # 阅读内容
 def readContent():
