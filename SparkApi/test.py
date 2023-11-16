@@ -43,7 +43,7 @@ engine.setProperty('voice',voices[0].id)
 scrollbar = Scrollbar(win)
 scrollbar.pack(side=RIGHT, fill=Y)
 
-font = Font(family="Driod Sans Mono", size=10)  # 设置显示字体
+font = Font(family="Microsoft Yahei", size=10)  # 设置显示字体
 text = []
 
 def reads(content):
