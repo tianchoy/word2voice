@@ -10,7 +10,6 @@ from datetime import datetime
 from time import mktime
 from urllib.parse import urlencode
 from wsgiref.handlers import format_date_time
-
 import websocket  # 使用websocket_client
 answer = ""
 
@@ -89,7 +88,8 @@ def on_message(ws, message):
         choices = data["payload"]["choices"]
         status = choices["status"]
         content = choices["text"][0]["content"]
-        print(content,end ="")
+        # print(content,end ="")
+        reads(content)
         global answer
         answer += content
         # print(1)

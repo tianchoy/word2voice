@@ -1,29 +1,18 @@
 from tkinter import *
 from tkinter.font import Font
 import SparkApi
+from config import appid,api_secret,api_key,domain,Spark_url,modelType
 import threading
 import pyperclip
 from tkinter import messagebox
 import pyttsx3
+import speech_recognition as sr
+import pocketsphinx
 
-# 以下密钥信息从控制台获取
-appid = ""  # 填写控制台中获取的 APPID 信息
-api_secret = ""  # 填写控制台中获取的 APISecret 信息
-api_key = ""  # 填写控制台中获取的 APIKey 信息
 
-# 用于配置大模型版本，默认“general/generalv2”
-domain = "general"  # v1.5版本
-# domain = "generalv2"    # v2.0版本
-# domain = "generalv3"   #v3.0版本
-# 云端环境的服务地址
-Spark_url = "ws://spark-api.xf-yun.com/v1.1/chat"  # v1.5环境的地址
-# Spark_url = "ws://spark-api.xf-yun.com/v2.1/chat"  # v2.0环境的地址
-# Spark_url = "ws://spark-api.xf-yun.com/v3.1/chat" #v3.0环境地址
-modelType = '1.5'
 winTitle = '讯飞星火V1.3'
 winSize = "750x550"
 answerContent = ''
-
 # 初始化窗体
 win = Tk()
 win.title(winTitle)
