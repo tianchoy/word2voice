@@ -6,9 +6,6 @@ import threading
 import pyperclip
 from tkinter import messagebox
 import pyttsx3
-import speech_recognition as sr
-import pocketsphinx
-
 
 winTitle = '讯飞星火V1.3'
 winSize = "750x550"
