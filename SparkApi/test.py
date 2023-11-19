@@ -139,7 +139,7 @@ def readContent():
     btn3.config(text='朗读中…', state='disabled')
 
 def starts():
-    result = messagebox.askyesno("提示：", "按下 A 键开始说话,\n按下 T 键停止说话。")
+    result = messagebox.askyesno("提示：", "切换成大写字母\n按下 A 键开始说话,\n按下 T 键停止说话。")
     # 判断用户选择结果
     if result:
         thread = threading.Thread(target=closed)

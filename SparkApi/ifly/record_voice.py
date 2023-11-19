@@ -15,8 +15,6 @@ def record(filename):
                     frames_per_buffer=CHUNK)   
 
     frames = []
-
-    print("按下空格键开始录制音频,按下s键停止录音。")
     recording = False 
     
     while True:   
