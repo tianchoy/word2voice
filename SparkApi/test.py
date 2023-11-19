@@ -12,7 +12,7 @@ import keyboard
 
 
 winTitle = '讯飞星火V1.5'
-winSize = "750x550"
+winSize = "800x600"
 answerContent = ''
 # 初始化窗体
 win = Tk()
@@ -39,7 +39,6 @@ scrollbar.pack(side=RIGHT, fill=Y)
 
 font = Font(family="Microsoft Yahei", size=10)  # 设置显示字体
 text = []
-
 def reads(content):
     engine.say(content)
     engine.runAndWait()
@@ -122,7 +121,7 @@ def copyContent():
         except:
             messagebox.showinfo(winTitle, "无法复制")
     else:
-        messagebox.showinfo(winTitle, "空内容复制个啥？")
+        messagebox.showinfo(winTitle, "内容为空？")
 
 # 阅读线程
 def readThread():
@@ -130,7 +129,7 @@ def readThread():
         reads(answerContent)
         btn3.config(text='朗读', state='normal')
     else:
-        reads('你好歹先问个问题，你啥也不问，我说啥？')
+        reads('有什么是我可以帮您的吗？')
         btn3.config(text='朗读', state='normal')
 
 # 阅读内容
@@ -147,11 +146,11 @@ def starts():
         thread.start()
         btn3.config(text='说话中…', state='disabled')
     else:
-        print("用户选择了取消")
-        # 执行取消操作的代码
+        messagebox.showinfo('提示','您也可以通过打字来提问')
 
 def closed():
     global text_s
+    global answerContent
     record(file)  # 录制音频
     txt_str = audio_to_text(file)  # 语音识别
     inputText = ("我：" + txt_str + '\n')
@@ -163,7 +162,11 @@ def closed():
     res = ('星火(' + modelType + ')回答：' + SparkApi.answer + '\n\n')
     answerContent = SparkApi.answer
     texts.insert(END, str(res))
-    btn4.config(text='说话', state='normal')
+    engine.say('即将为您打印出我的回答')
+    engine.runAndWait()
+    engine.stop()
+    btn4.config(text='语音', state='normal')
+    btn3.config(text='朗读', state='normal')
 
 # 布局窗体
 var = IntVar()
@@ -188,7 +191,7 @@ texts = Text(win, wrap=WORD, yscrollcommand=scrollbar.set, font=font, padx=10, p
 texts.place(relx=0.03, rely=0.15, relwidth=0.94, relheight=0.82)
 scrollbar.config(command=texts.yview)
 
-btn = Button(win, text="生成", command=runbuild)
+btn = Button(win, text="提问", command=runbuild)
 btn.place(relx=0.73, rely=0.03, relwidth=0.07, relheight=0.05)
 
 btn1 = Button(win, text="清除", command=clearbuild)
@@ -200,7 +203,7 @@ btn2.place(relx=0.85, rely=0.03, relwidth=0.05, relheight=0.05)
 btn3 = Button(win, text="朗读", command=readContent)
 btn3.place(relx=0.9, rely=0.03, relwidth=0.07, relheight=0.05)
 
-btn4 = Button(win,text="说话",command=starts)
+btn4 = Button(win,text="语音", command=starts)
 btn4.place(relx=0.66, rely=0.03, relwidth=0.07, relheight=0.05)
 
 # 载入窗体
