@@ -8,6 +8,7 @@ from tkinter import messagebox
 import pyttsx3
 from ifly.record_voice import record
 from ifly.ifly_a2t import audio_to_text
+import keyboard
 
 
 winTitle = '讯飞星火V1.5'
@@ -21,6 +22,7 @@ win.geometry(winSize)
 # 录制用户语音
 file = 'user_voice.wav'
 
+# win.withdraw()
 
 # 初始化语音插件
 engine = pyttsx3.init()
@@ -64,7 +66,6 @@ def checklen(text):
     while getlength(text) > 8000:
         del text[0]
     return text
-
 
 def print_selection():
     print(var.get())
@@ -139,17 +140,20 @@ def readContent():
     btn3.config(text='朗读中…', state='disabled')
 
 def starts():
-    thread = threading.Thread(target=closed)
-    thread.start()
-    btn4.config(text='说话中', state='disabled')
-
-
+    result = messagebox.askyesno("提示：", "按下 A 键开始说话,\n按下 T 键停止说话。")
+    # 判断用户选择结果
+    if result:
+        thread = threading.Thread(target=closed)
+        thread.start()
+        btn3.config(text='说话中…', state='disabled')
+    else:
+        print("用户选择了取消")
+        # 执行取消操作的代码
 
 def closed():
     global text_s
     record(file)  # 录制音频
     txt_str = audio_to_text(file)  # 语音识别
-    print(txt_str)  # 打印识别结果
     inputText = ("我：" + txt_str + '\n')
     texts.insert(END, inputText)
     question = checklen(getText("user", inputText))
