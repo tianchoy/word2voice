@@ -6,14 +6,20 @@ import threading
 import pyperclip
 from tkinter import messagebox
 import pyttsx3
+from ifly.record_voice import record
+from ifly.ifly_a2t import audio_to_text
 
-winTitle = '讯飞星火V1.3'
+
+winTitle = '讯飞星火V1.5'
 winSize = "750x550"
 answerContent = ''
 # 初始化窗体
 win = Tk()
 win.title(winTitle)
 win.geometry(winSize)
+
+# 录制用户语音
+file = 'user_voice.wav'
 
 
 # 初始化语音插件
@@ -105,6 +111,7 @@ def clearbuild():
     texts.delete(1.0, END)
 
 
+
 def copyContent():
     content = texts.get("1.0", "end-1c")
     if content != '':
@@ -130,6 +137,29 @@ def readContent():
     thread = threading.Thread(target=readThread)
     thread.start()
     btn3.config(text='朗读中…', state='disabled')
+
+def starts():
+    thread = threading.Thread(target=closed)
+    thread.start()
+    btn4.config(text='说话中', state='disabled')
+
+
+
+def closed():
+    global text_s
+    record(file)  # 录制音频
+    txt_str = audio_to_text(file)  # 语音识别
+    print(txt_str)  # 打印识别结果
+    inputText = ("我：" + txt_str + '\n')
+    texts.insert(END, inputText)
+    question = checklen(getText("user", inputText))
+    SparkApi.answer = ""
+    SparkApi.main(appid, api_key, api_secret, Spark_url, domain, question)
+    reads(SparkApi.answer)
+    res = ('星火(' + modelType + ')回答：' + SparkApi.answer + '\n\n')
+    answerContent = SparkApi.answer
+    texts.insert(END, str(res))
+    btn4.config(text='说话', state='normal')
 
 # 布局窗体
 var = IntVar()
@@ -165,6 +195,9 @@ btn2.place(relx=0.85, rely=0.03, relwidth=0.05, relheight=0.05)
 
 btn3 = Button(win, text="朗读", command=readContent)
 btn3.place(relx=0.9, rely=0.03, relwidth=0.07, relheight=0.05)
+
+btn4 = Button(win,text="说话",command=starts)
+btn4.place(relx=0.66, rely=0.03, relwidth=0.07, relheight=0.05)
 
 # 载入窗体
 win.mainloop()

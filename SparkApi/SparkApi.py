@@ -89,7 +89,7 @@ def on_message(ws, message):
         status = choices["status"]
         content = choices["text"][0]["content"]
         # print(content,end ="")
-        reads(content)
+        # reads(content)
         global answer
         answer += content
         # print(1)
