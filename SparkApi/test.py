@@ -150,17 +150,16 @@ def delete_file():
         pass
 
 def starts():
-    texts.insert(END, "开始录音...\n")
     delete_file()
     thread = threading.Thread(target=nowSay)
     thread.start()
     btn4.config(text='说话中…', state='disabled')
 
 def nowSay():
-    global text_s
     global answerContent
-    txt_str = ''
     record(file)  # 录制音频
+    texts.insert(END, "录音结束...\n")
+    txt_str = ''
     txt_str = audio_to_text(file)  # 语音识别
     inputText = ("我：" + txt_str + '\n')
     texts.insert(END, inputText)
@@ -207,6 +206,9 @@ r3.place(relx=0.22, rely=0.1, relwidth=0.15, relheight=0.05)
 texts = Text(win, wrap=WORD, yscrollcommand=scrollbar.set, font=font, padx=10, pady=10)
 texts.place(relx=0.03, rely=0.15, relwidth=0.94, relheight=0.82)
 scrollbar.config(command=texts.yview)
+def_text=('使用语音助手，请先点击“语音”，然后在按下"Q"键后开始说话，说完,按下"A"键结束\n '
+          '-----------------------------------------------------------------------------------\n')
+texts.insert('1.0',def_text)
 
 btn = Button(win, text="提问", command=runbuild)
 btn.place(relx=0.73, rely=0.03, relwidth=0.07, relheight=0.05)

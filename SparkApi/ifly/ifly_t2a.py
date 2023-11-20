@@ -28,7 +28,7 @@ from datetime import datetime
 from time import mktime
 import _thread as thread
 import os
-
+from config.config import appid,api_secret,api_key
 
 STATUS_FIRST_FRAME = 0  # 第一帧的标识
 STATUS_CONTINUE_FRAME = 1  # 中间帧标识
@@ -145,13 +145,9 @@ def text_to_audio (audio_path,text_content):
     Audio_Path=audio_path
     
     #ifly_api.txt中读取APP_ID, API_KEY, SECRET_KEY,格式为APP_ID:xxxxx 以此类推
-    with open('ifly_api.txt', 'r') as f:
-        lines = f.readlines()
-        APP_ID = lines[0].split(':')[1].strip()
-        API_KEY = lines[1].split(':')[1].strip()
-        SECRET_KEY = lines[2].split(':')[1].strip()    
+
     
-    wsParam = Ws_Param(APP_ID,API_KEY,SECRET_KEY,text_content)   
+    wsParam = Ws_Param(appid,api_key,api_secret,text_content)
     
     websocket.enableTrace(False)
     wsUrl = wsParam.create_url()

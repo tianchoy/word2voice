@@ -29,6 +29,7 @@ from wsgiref.handlers import format_date_time
 from datetime import datetime
 from time import mktime
 import _thread as thread
+from config.config import appid,api_secret,api_key
 
 STATUS_FIRST_FRAME = 0  # 第一帧的标识
 STATUS_CONTINUE_FRAME = 1  # 中间帧标识
@@ -48,7 +49,7 @@ class Ws_Param(object):
         # 公共参数(common)
         self.CommonArgs = {"app_id": self.APPID}
         # 业务参数(business)，更多个性化参数可在官网查看
-        self.BusinessArgs = {"domain": "iat", "language": "zh_cn", "accent": "mandarin", "vinfo":1,"vad_eos":10000}
+        self.BusinessArgs = {"domain": "iat", "language": "zh_cn", "accent": "mandarin", "vinfo": 1, "vad_eos": 10000}
 
     # 生成url
     def create_url(self):
@@ -62,7 +63,8 @@ class Ws_Param(object):
         signature_origin += "date: " + date + "\n"
         signature_origin += "GET " + "/v2/iat " + "HTTP/1.1"
         # 进行hmac-sha256进行加密
-        signature_sha = hmac.new(self.APISecret.encode('utf-8'), signature_origin.encode('utf-8'),digestmod=hashlib.sha256).digest()
+        signature_sha = hmac.new(self.APISecret.encode('utf-8'), signature_origin.encode('utf-8'),
+                                 digestmod=hashlib.sha256).digest()
         signature_sha = base64.b64encode(signature_sha).decode(encoding='utf-8')
 
         authorization_origin = "api_key=\"%s\", algorithm=\"%s\", headers=\"%s\", signature=\"%s\"" % (
@@ -82,7 +84,8 @@ class Ws_Param(object):
         # print('websocket url :', url)
         return url
 
-wsParam = Ws_Param("APP_ID","API_KEY","SECRET_KEY","Audio_path")    
+
+wsParam = Ws_Param("APP_ID", "API_KEY", "SECRET_KEY", "Audio_path")
 
 
 # 收到websocket消息的处理
@@ -104,12 +107,11 @@ def on_message(ws, message):
                     result += w["w"]
             # print("sid:%s call success!,data is:%s" % (sid, json.dumps(data, ensure_ascii=False)))
             # print("%s"% (json.dumps(data, ensure_ascii=False)))
-            Text_Content+=result
+            Text_Content += result
             # print("jieguo:"+result)
-            
+
     except Exception as e:
         print("receive msg,but parse exception:", e)
-
 
 
 # 收到websocket错误的处理
@@ -118,7 +120,7 @@ def on_error(ws, error):
 
 
 # 收到websocket关闭的处理
-def on_close(ws,a,b):
+def on_close(ws, a, b):
     # print("### closed ###")
     print("语音转文字完毕!")
 
@@ -142,50 +144,45 @@ def on_open(ws):
                 if status == STATUS_FIRST_FRAME:
 
                     d = {"common": wsParam.CommonArgs,
-                        "business": wsParam.BusinessArgs,
-                        "data": {"status": 0, "format": "audio/L16;rate=16000",
-                                "audio": str(base64.b64encode(buf), 'utf-8'),
-                                "encoding": "raw"}}
+                         "business": wsParam.BusinessArgs,
+                         "data": {"status": 0, "format": "audio/L16;rate=16000",
+                                  "audio": str(base64.b64encode(buf), 'utf-8'),
+                                  "encoding": "raw"}}
                     d = json.dumps(d)
                     ws.send(d)
                     status = STATUS_CONTINUE_FRAME
                 # 中间帧处理
                 elif status == STATUS_CONTINUE_FRAME:
                     d = {"data": {"status": 1, "format": "audio/L16;rate=16000",
-                                "audio": str(base64.b64encode(buf), 'utf-8'),
-                                "encoding": "raw"}}
+                                  "audio": str(base64.b64encode(buf), 'utf-8'),
+                                  "encoding": "raw"}}
                     ws.send(json.dumps(d))
                 # 最后一帧处理
                 elif status == STATUS_LAST_FRAME:
                     d = {"data": {"status": 2, "format": "audio/L16;rate=16000",
-                                "audio": str(base64.b64encode(buf), 'utf-8'),
-                                "encoding": "raw"}}
+                                  "audio": str(base64.b64encode(buf), 'utf-8'),
+                                  "encoding": "raw"}}
                     ws.send(json.dumps(d))
                     time.sleep(1)
                     break
                 # 模拟音频采样间隔
                 time.sleep(intervel)
         ws.close()
+
     thread.start_new_thread(run, ())
 
 
-
-def audio_to_text (audio_Path):
-    global wsParam,Text_Content
-    #ifly_api.txt中读取APP_ID, API_KEY, SECRET_KEY,格式为APP_ID:xxxxx 以此类推
-    with open('ifly_api.txt', 'r') as f:
-        lines = f.readlines()
-        APP_ID = lines[0].split(':')[1].strip()
-        API_KEY = lines[1].split(':')[1].strip()
-        SECRET_KEY = lines[2].split(':')[1].strip()    
-    
-    wsParam = Ws_Param(APP_ID,API_KEY,SECRET_KEY,audio_Path)      
+def audio_to_text(audio_Path):
+    global wsParam, Text_Content
+    wsParam = Ws_Param(appid, api_key, api_secret, audio_Path)
     websocket.enableTrace(False)
     wsUrl = wsParam.create_url()
     ws = websocket.WebSocketApp(wsUrl, on_message=on_message, on_error=on_error, on_close=on_close)
     ws.on_open = on_open
     ws.run_forever(sslopt={"cert_reqs": ssl.CERT_NONE})
+    print(Text_Content)
     return Text_Content
+
 
 def clear_text():
     global Text_Content

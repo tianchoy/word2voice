@@ -35,12 +35,6 @@ def record(filename):
         else:
             pass
 
-        # if not stream.is_active():
-        #     print('录音意外停止!')
-        #     break
-        # else:
-        #     pass
-
     stream.stop_stream()
     stream.close()
     p.terminate()
