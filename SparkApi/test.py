@@ -9,6 +9,7 @@ import pyttsx3
 from ifly.record_voice import record
 from ifly.ifly_a2t import audio_to_text
 import keyboard
+import os
 
 
 winTitle = '讯飞星火V1.5'
@@ -138,19 +139,27 @@ def readContent():
     thread.start()
     btn3.config(text='朗读中…', state='disabled')
 
-def starts():
-    result = messagebox.askyesno("提示：", "切换成大写字母\n按下 A 键开始说话,\n按下 T 键停止说话。")
-    # 判断用户选择结果
-    if result:
-        thread = threading.Thread(target=closed)
-        thread.start()
-        btn3.config(text='说话中…', state='disabled')
+def delete_file():
+    file_path = "user_voice.wav"  # 替换为你的wav文件的路径
+    if os.path.exists(file_path):
+        try:
+            os.remove(file_path)
+        except Exception as e:
+            print("Error", f"Failed to delete file. Error: {e}")
     else:
-        messagebox.showinfo('提示','您也可以通过打字来提问')
+        pass
 
-def closed():
+def starts():
+    texts.insert(END, "开始录音...\n")
+    delete_file()
+    thread = threading.Thread(target=nowSay)
+    thread.start()
+    btn4.config(text='说话中…', state='disabled')
+
+def nowSay():
     global text_s
     global answerContent
+    txt_str = ''
     record(file)  # 录制音频
     txt_str = audio_to_text(file)  # 语音识别
     inputText = ("我：" + txt_str + '\n')
@@ -162,11 +171,19 @@ def closed():
     res = ('星火(' + modelType + ')回答：' + SparkApi.answer + '\n\n')
     answerContent = SparkApi.answer
     texts.insert(END, str(res))
-    engine.say('即将为您打印出我的回答')
     engine.runAndWait()
     engine.stop()
     btn4.config(text='语音', state='normal')
-    btn3.config(text='朗读', state='normal')
+
+
+def close():
+    texts.insert(END, "录音结束...\n")
+    thread = threading.Thread(target=closeThread)
+    thread.start()
+
+
+def closeThread():
+    record(file)  # 录制音频
 
 # 布局窗体
 var = IntVar()
@@ -205,6 +222,8 @@ btn3.place(relx=0.9, rely=0.03, relwidth=0.07, relheight=0.05)
 
 btn4 = Button(win,text="语音", command=starts)
 btn4.place(relx=0.66, rely=0.03, relwidth=0.07, relheight=0.05)
+# btn5 = Button(win,text="停止", command=close)
+# btn5.place(relx=0.6, rely=0.03, relwidth=0.07, relheight=0.05)
 
 # 载入窗体
 win.mainloop()
