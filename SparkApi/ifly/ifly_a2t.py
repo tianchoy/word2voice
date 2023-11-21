@@ -129,7 +129,7 @@ def on_close(ws, a, b):
 def on_open(ws):
     def run(*args):
         frameSize = 8000  # 每一帧的音频大小
-        intervel = 0.04  # 发送音频间隔(单位:s)
+        interval = 0.04  # 发送音频间隔(单位:s)
         status = STATUS_FIRST_FRAME  # 音频的状态信息，标识音频是第一帧，还是中间帧、最后一帧
 
         with open(wsParam.AudioFile, "rb") as fp:
@@ -166,7 +166,7 @@ def on_open(ws):
                     time.sleep(1)
                     break
                 # 模拟音频采样间隔
-                time.sleep(intervel)
+                time.sleep(interval)
         ws.close()
 
     thread.start_new_thread(run, ())

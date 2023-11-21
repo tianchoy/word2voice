@@ -12,6 +12,7 @@ import wave
 from ifly.ifly_a2t import audio_to_text
 import keyboard
 import os
+import re
 
 
 winTitle = '讯飞星火V1.6'
@@ -195,9 +196,12 @@ def nowSay():
     recording = True
     texts.insert(END, "开始录音...\n")
     record(file)
-    txt_str = ''
     txt_str = audio_to_text(file)  # 语音识别
-    inputText = ("我：" + txt_str + '\n')
+    print(txt_str)
+    split_string = re.split(r'[，。？；：“ ” ]', str(txt_str))  # 使用逗号、句号、问号进行分割
+    print(split_string)
+    last_item = split_string[-2]  # 获取最后一项
+    inputText = ("我：" + last_item + '\n')
     texts.insert(END, inputText)
     question = checklen(getText("user", inputText))
     SparkApi.answer = ""

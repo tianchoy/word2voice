@@ -145,8 +145,6 @@ def text_to_audio(audio_path, text_content):
     global Audio_Path, wsParam
     Audio_Path = audio_path
 
-    # ifly_api.txt中读取APP_ID, API_KEY, SECRET_KEY,格式为APP_ID:xxxxx 以此类推
-
     wsParam = Ws_Param(appid, api_key, api_secret, text_content)
 
     websocket.enableTrace(False)
