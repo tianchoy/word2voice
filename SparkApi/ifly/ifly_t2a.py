@@ -28,7 +28,7 @@ from datetime import datetime
 from time import mktime
 import _thread as thread
 import os
-from config.config import appid,api_secret,api_key
+from config.config import appid, api_secret, api_key
 
 STATUS_FIRST_FRAME = 0  # 第一帧的标识
 STATUS_CONTINUE_FRAME = 1  # 中间帧标识
@@ -50,8 +50,8 @@ class Ws_Param(object):
         # 业务参数(business)，更多个性化参数可在官网查看
         self.BusinessArgs = {"aue": "lame", "sfl": 1, "auf": "audio/L16;rate=16000", "vcn": "xiaoyan", "tte": "utf8"}
         self.Data = {"status": 2, "text": str(base64.b64encode(self.Text.encode('utf-8')), "UTF8")}
-        #使用小语种须使用以下方式，此处的unicode指的是 utf16小端的编码方式，即"UTF-16LE"”
-        #self.Data = {"status": 2, "text": str(base64.b64encode(self.Text.encode('utf-16')), "UTF8")}
+        # 使用小语种须使用以下方式，此处的unicode指的是 utf16小端的编码方式，即"UTF-16LE"”
+        # self.Data = {"status": 2, "text": str(base64.b64encode(self.Text.encode('utf-16')), "UTF8")}
 
     # 生成url
     def create_url(self):
@@ -65,7 +65,8 @@ class Ws_Param(object):
         signature_origin += "date: " + date + "\n"
         signature_origin += "GET " + "/v2/tts " + "HTTP/1.1"
         # 进行hmac-sha256进行加密
-        signature_sha = hmac.new(self.APISecret.encode('utf-8'), signature_origin.encode('utf-8'),digestmod=hashlib.sha256).digest()
+        signature_sha = hmac.new(self.APISecret.encode('utf-8'), signature_origin.encode('utf-8'),
+                                 digestmod=hashlib.sha256).digest()
         signature_sha = base64.b64encode(signature_sha).decode(encoding='utf-8')
 
         authorization_origin = "api_key=\"%s\", algorithm=\"%s\", headers=\"%s\", signature=\"%s\"" % (
@@ -85,12 +86,14 @@ class Ws_Param(object):
         # print('websocket url :', url)
         return url
 
-wsParam = Ws_Param("APP_ID","API_KEY","SECRET_KEY","Text_Content")    
+
+wsParam = Ws_Param("APP_ID", "API_KEY", "SECRET_KEY", "Text_Content")
+
 
 def on_message(ws, message):
     global Audio_Path
     try:
-        message =json.loads(message)
+        message = json.loads(message)
         code = message["code"]
         sid = message["sid"]
         audio = message["data"]["audio"]
@@ -110,7 +113,6 @@ def on_message(ws, message):
         print("receive msg,but parse exception:", e)
 
 
-
 # 收到websocket错误的处理
 def on_error(ws, error):
     print("### error:", error)
@@ -123,12 +125,13 @@ def on_close(ws):
 
 # 收到websocket连接建立的处理
 def on_open(ws):
-    global Audio_Path,wsParam
+    global Audio_Path, wsParam
+
     def run(*args):
         d = {"common": wsParam.CommonArgs,
-            "business": wsParam.BusinessArgs,
-            "data": wsParam.Data,
-            }
+             "business": wsParam.BusinessArgs,
+             "data": wsParam.Data,
+             }
         d = json.dumps(d)
         # print("------>开始发送文本数据")
         ws.send(d)
@@ -138,21 +141,18 @@ def on_open(ws):
     thread.start_new_thread(run, ())
 
 
+def text_to_audio(audio_path, text_content):
+    global Audio_Path, wsParam
+    Audio_Path = audio_path
 
+    # ifly_api.txt中读取APP_ID, API_KEY, SECRET_KEY,格式为APP_ID:xxxxx 以此类推
 
-def text_to_audio (audio_path,text_content):
-    global Audio_Path,wsParam
-    Audio_Path=audio_path
-    
-    #ifly_api.txt中读取APP_ID, API_KEY, SECRET_KEY,格式为APP_ID:xxxxx 以此类推
+    wsParam = Ws_Param(appid, api_key, api_secret, text_content)
 
-    
-    wsParam = Ws_Param(appid,api_key,api_secret,text_content)
-    
     websocket.enableTrace(False)
     wsUrl = wsParam.create_url()
     ws = websocket.WebSocketApp(wsUrl, on_message=on_message, on_error=on_error, on_close=on_close)
     ws.on_open = on_open
     ws.run_forever(sslopt={"cert_reqs": ssl.CERT_NONE})
-    
+
     return True

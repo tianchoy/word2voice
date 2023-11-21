@@ -100,7 +100,7 @@ def on_message(ws, message):
 
         else:
             data = json.loads(message)["data"]["result"]["ws"]
-            # print(json.loads(message))
+            # print(data)
             result = ""
             for i in data:
                 for w in i["cw"]:
@@ -108,7 +108,7 @@ def on_message(ws, message):
             # print("sid:%s call success!,data is:%s" % (sid, json.dumps(data, ensure_ascii=False)))
             # print("%s"% (json.dumps(data, ensure_ascii=False)))
             Text_Content += result
-            # print("jieguo:"+result)
+            # print("结果:"+result)
 
     except Exception as e:
         print("receive msg,but parse exception:", e)

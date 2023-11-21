@@ -6,13 +6,15 @@ import threading
 import pyperclip
 from tkinter import messagebox
 import pyttsx3
-from ifly.record_voice import record
+import pyaudio
+import wave
+# from ifly.record_voice import record
 from ifly.ifly_a2t import audio_to_text
 import keyboard
 import os
 
 
-winTitle = '讯飞星火V1.5'
+winTitle = '讯飞星火V1.6'
 winSize = "800x600"
 answerContent = ''
 # 初始化窗体
@@ -20,8 +22,10 @@ win = Tk()
 win.title(winTitle)
 win.geometry(winSize)
 
+recording = False
+frames = []
 # 录制用户语音
-file = 'user_voice.wav'
+file = 'user.wav'
 
 # win.withdraw()
 
@@ -149,6 +153,36 @@ def delete_file():
     else:
         pass
 
+
+def record(filename):
+    global recording, frames
+    p = pyaudio.PyAudio()
+    FORMAT = pyaudio.paInt16
+    CHANNELS = 1
+    RATE = 16000
+    CHUNK = 1024
+
+    stream = p.open(rate=RATE, format=FORMAT, channels=CHANNELS, input=True, frames_per_buffer=CHUNK)
+
+    frames = []
+    recording = True
+    while recording:
+        data = stream.read(CHUNK)
+        frames.append(data)
+        win.update()
+
+    stream.stop_stream()
+    stream.close()
+    p.terminate()
+
+    wf = wave.open(filename, 'wb')
+    wf.setframerate(RATE)
+    wf.setnchannels(CHANNELS)
+    wf.setsampwidth(p.get_sample_size(FORMAT))
+    wf.writeframes(b''.join(frames))
+    wf.close()
+
+
 def starts():
     delete_file()
     thread = threading.Thread(target=nowSay)
@@ -157,8 +191,10 @@ def starts():
 
 def nowSay():
     global answerContent
-    record(file)  # 录制音频
-    texts.insert(END, "录音结束...\n")
+    global recording
+    recording = True
+    texts.insert(END, "开始录音...\n")
+    record(file)
     txt_str = ''
     txt_str = audio_to_text(file)  # 语音识别
     inputText = ("我：" + txt_str + '\n')
@@ -176,13 +212,10 @@ def nowSay():
 
 
 def close():
+    global recording
+    recording = False
     texts.insert(END, "录音结束...\n")
-    thread = threading.Thread(target=closeThread)
-    thread.start()
 
-
-def closeThread():
-    record(file)  # 录制音频
 
 # 布局窗体
 var = IntVar()
@@ -206,9 +239,6 @@ r3.place(relx=0.22, rely=0.1, relwidth=0.15, relheight=0.05)
 texts = Text(win, wrap=WORD, yscrollcommand=scrollbar.set, font=font, padx=10, pady=10)
 texts.place(relx=0.03, rely=0.15, relwidth=0.94, relheight=0.82)
 scrollbar.config(command=texts.yview)
-def_text=('使用语音助手，请先点击“语音”，然后在按下"Q"键后开始说话，说完,按下"A"键结束\n '
-          '-----------------------------------------------------------------------------------\n')
-texts.insert('1.0',def_text)
 
 btn = Button(win, text="提问", command=runbuild)
 btn.place(relx=0.73, rely=0.03, relwidth=0.07, relheight=0.05)
@@ -223,9 +253,9 @@ btn3 = Button(win, text="朗读", command=readContent)
 btn3.place(relx=0.9, rely=0.03, relwidth=0.07, relheight=0.05)
 
 btn4 = Button(win,text="语音", command=starts)
-btn4.place(relx=0.66, rely=0.03, relwidth=0.07, relheight=0.05)
-# btn5 = Button(win,text="停止", command=close)
-# btn5.place(relx=0.6, rely=0.03, relwidth=0.07, relheight=0.05)
+btn4.place(relx=0.83, rely=0.09, relwidth=0.07, relheight=0.05)
+btn5 = Button(win,text="停止", command=close)
+btn5.place(relx=0.9, rely=0.09, relwidth=0.07, relheight=0.05)
 
 # 载入窗体
 win.mainloop()
