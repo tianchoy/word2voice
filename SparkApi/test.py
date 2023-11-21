@@ -10,7 +10,6 @@ import pyaudio
 import wave
 # from ifly.record_voice import record
 from ifly.ifly_a2t import audio_to_text
-import keyboard
 import os
 import re
 
